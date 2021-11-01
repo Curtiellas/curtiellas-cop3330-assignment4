@@ -1,27 +1,73 @@
 @startuml
 'https://plantuml.com/class-diagram
 
-abstract class AbstractList
-abstract AbstractCollection
-interface List
-interface Collection
-
-List <|-- AbstractList
-Collection <|-- AbstractCollection
-
-Collection <|- List
-AbstractCollection <|- AbstractList
-AbstractList <|-- ArrayList
-
-class ArrayList {
-Object[] elementData
-size()
+class Global {
+    +String saveDirectory
+    +toDoList[] mainList
 }
 
-enum TimeUnit {
-DAYS
-HOURS
-MINUTES
+class App {
+    +start()
+    +main()
 }
 
+class Controller {
+    -Label displayListLabel
+    -Label helpMessage
+    -- General Tools --
+    #setHelpMessage()
+    #exitGUI()
+    -- List Tools --
+    #removeList()
+    #editListTitle()
+    #displayList()
+    #saveOneList()
+    #saveAllLists()
+    #loadOneList()
+    #loadAllLists()
+    -- Task Tools --
+    #addTask()
+    #removeTask()
+    #editDescription()
+    #editDate()
+    #editStatus()
+}
+
+class SaveLoad {
+    +saveFile()
+    +loadFile()
+    +getFilePaths()
+}
+
+class toDoList {
+    -String title
+    -Task[] taskList
+    +setters()
+    +getters()
+}
+
+class Task {
+    -String description
+    -String dueDate
+    -String status
+    +setters()
+    +getters()
+}
+
+Controller::saveOneList -right-> SaveLoad::saveFile
+Controller::saveAllLists -right-> SaveLoad::saveFile
+Controller::loadOneList -right-> SaveLoad::loadFile
+Controller::loadAllLists -right-> SaveLoad::loadFile
+
+App .right. Controller
+
+Task -right*toDoList
+toDoList -right* Global
+
+Global::saveDirectory -down-> SaveLoad
+Global::mainList -> Controller
+
+note bottom of Controller : Manages all user interactions\nand modifies to-do lists
+note top of Global : Directory path where files are stored,\nand array that holds all to-do lists
+note bottom of SaveLoad : Tools that create/write to files and\nextract the information from files
 @enduml
